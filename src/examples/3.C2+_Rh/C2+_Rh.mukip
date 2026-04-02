@@ -1,0 +1,105 @@
+{
+    "decimal_precision": 100,
+    "convergence_precision": 70,
+    "thermo": {},
+    "species": {
+        "H2_g": {
+            "concentration": 0.33333333
+        },
+        "CO_g": {
+            "concentration": 0.66666667
+        },
+        "s": {
+            "total": 1
+        },
+        "h": {
+            "total": 1
+        }
+    },
+    "reactions": {
+        "1": {"equation": "H2_g + 2h -> 2H_h"},
+        "2": {"equation": "CO_g + * -> CO*"},
+        "3": {"equation": "H_h + CO* <-> H-CO* + h -> CHO* + h"},
+        "4": {"equation": "CHO* + H_h <-> HCO-H* + h -> CHOH* + h"},
+        "5": {"equation": "CHOH* + * <-> CH-OH* + * -> CH* + OH*"},
+        "6": {"equation": "CH* + H_h <-> CH-H* + h -> CH2* + h"},
+        "7": {"equation": "CH2* + H_h <-> H-CH2* + h -> CH3* + h"},
+        "8": {"equation": "CH3* + H_h <-> H-CH3* + h -> CH4_g + * + h"},
+        "9": {"equation": "OH* + H_h <-> H-OH* + h -> H2O_g + * + h"},
+        "10": {"equation": "CH* + CO* <-> CH-CO* + * -> CHCO* + *"},
+        "11": {"equation": "CHCO* + H_h <-> H-CHCO* + h -> CH2CO* + h"},
+        "12": {"equation": "CH2CO* + H_h <-> H-CH2CO* + h -> CH3CO* + h"},
+        "13": {"equation": "CH3CO* + H_h <-> H-CH3CO* + h -> CH3CHO* + h"},
+        "14": {"equation": "CH3CHO* -> CH3CHO_g + *"},
+        "15": {"equation": "CH3CHO* + H_h <-> CH3CHO-H* + h -> CH3CHOH* + h"},
+        "16": {"equation": "CH3CHOH* + H_h <-> CH3CHOH-H* + h -> CH3CH2OH* + h"},
+        "17": {"equation": "CH3CH2OH* -> CH3CH2OH_g + *"},
+    },
+    "default_thermo": {
+        "gas": "frozen_gas",
+        "adsorbate": "frozen_adsorbate"
+    },
+    "mapper": {
+        "class": "Mapper2D",
+        "descriptors": {
+            "temperature": [
+                [
+                    300,
+                    800,
+                    51
+                ]
+            ],
+            "log(pressure)": [
+                [
+                    -3,
+                    3.0,
+                    31
+                ]
+            ]
+        },
+        "max_bisect": 50
+    },
+    "parser": {
+        "class": "TableParser",
+        "input_file": "energies.txt"
+    },
+    "scaler": {
+        "class": "Scaler",
+        "surface_names": [
+            "Rh(111)"
+        ]
+    },
+    "solver": {
+        "class": "SteadyStateSolver",
+        "tolerance": 1e-75,
+        "max_iterations": 1000,
+        "error_threshold": 0.99
+    },
+    "guesser": [
+        "OriginalDataGuesser",
+        {
+            "class": "ODEGuesser",
+            "max_iterations": 100
+        }
+    ],
+    "selectivity_tracking": [
+        "C"
+    ],
+    "writer": [
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[CH3CH2OH_g]",
+            "output_file": "tof[CH3CH2OH_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[CH3CHO_g]",
+            "output_file": "tof[CH3CHO_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[CH4_g]",
+            "output_file": "tof[CH4_g].csv"
+        }
+    ]
+}

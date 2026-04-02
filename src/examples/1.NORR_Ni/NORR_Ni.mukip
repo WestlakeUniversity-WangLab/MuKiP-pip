@@ -1,0 +1,247 @@
+{
+    "decimal_precision": 120,
+    "convergence_precision": 100,
+    "extra_molecules": "NORR.json",
+    "thermo": {},
+    "species": {
+        "H2_g": {
+            "concentration": 0.5
+        },
+        "NO_g": {
+            "concentration": 0.5
+        },
+        "s": {
+            "site_names": [
+                "111"
+            ],
+            "total": 1
+        }
+    },
+    "reactions": {
+        "1": {
+            "equation": "NO_g + * -> NO*"
+        },
+        "2": {
+            "equation": "NO* + * <-> N-O* + * -> N*+O*"
+        },
+        "3": {
+            "equation": "H2_g + 2* <-> H-H* + * -> H* + H*"
+        },
+        "4": {
+            "equation": "N* + N* <-> N-N* + * -> N2* + *"
+        },
+        "5": {
+            "equation": "N2*  -> N2_g + *"
+        },
+        "6": {
+            "equation": "O* + O* <-> O-O* + * -> O2* + *"
+        },
+        "7": {
+            "equation": "O2*  -> O2_g + *"
+        },
+        "8": {
+            "equation": "O* + H* <-> O-H* + * -> OH* + *"
+        },
+        "9": {
+            "equation": "OH* + H* <-> OH-H* + * -> H2O* + *"
+        },
+        "10": {
+            "equation": "OH* + OH* <-> OH-OH* + * -> H2O* + O*",
+            "disabled": true
+        },
+        "11": {
+            "equation": "H2O*  -> H2O_g + *"
+        },
+        "12": {
+            "equation": "N* + H* <-> N-H* + * -> NH* + *"
+        },
+        "13": {
+            "equation": "NH* + H* <-> NH-H* + * -> NH2* + *"
+        },
+        "14": {
+            "equation": "NH2* + H* <-> NH2-H* + * -> NH3* + *"
+        },
+        "15": {
+            "equation": "NO* + H* <-> NO-H* + * -> NOH* + *"
+        },
+        "16": {
+            "equation": "NOH*+* <->N-OH*+* ->N*+OH*"
+        },
+        "17": {
+            "equation": "H* + NOH*  <-> H-NOH* + * -> NHOH* + *"
+        },
+        "18": {
+            "equation": "NHOH* + * <->NH-OH* + * -> NH* + OH*"
+        },
+        "19": {
+            "equation": "H* + NHOH*  <-> H-NHOH* + * -> NH2OH* + *"
+        },
+        "20": {
+            "equation": "NH2OH* + * <-> NH2-OH* + * -> NH2* + OH*"
+        },
+        "21": {
+            "equation": "H* + NO*  <-> H-NO* + * -> NHO* + *"
+        },
+        "22": {
+            "equation": "NHO* + * <-> NH-O* + * -> NH* + O*"
+        },
+        "23": {
+            "equation": "NHO* + H* <-> NHO-H* + * -> NHOH* + *"
+        },
+        "24": {
+            "equation": "H* +NHO* <-> H-NHO* + * -> NH2O* + *"
+        },
+        "25": {
+            "equation": "NH2O* + * <-> NH2-O* + * -> NH2* + O*"
+        },
+        "26": {
+            "equation": "NH2O* + H* <-> NH2O-H* + * -> NH2OH* + *"
+        },
+        "27": {
+            "equation": "NH2OH*  -> NH2OH_g + *"
+        },
+        "28": {
+            "equation": "H* + NH2O* <-> H-NH2O* + * -> NH3O* + *"
+        },
+        "29": {
+            "equation": "NH3O* + * <-> NH3-O* + * -> NH3* + O*"
+        },
+        "30": {
+            "equation": "NO* + N* <-> NO-N* + * -> N2O* + *"
+        },
+        "31": {
+            "equation": "N2O*  -> N2O_g + *"
+        },
+        "32": {
+            "equation": "N2O* + * <-> N2-O* + * -> N2* + O*"
+        },
+        "33": {
+            "equation": "NO* + NH* <-> NO-NH* + * -> HNNO* + *"
+        },
+        "34": {
+            "equation": "HNNO* + * <-> H-NNO* + * -> H* + N2O*"
+        },
+        "35": {
+            "equation": "NH* + NH* <-> NH-NH* + * -> HNNH* + *"
+        },
+        "36": {
+            "equation": "HNNH* + H*<-> HNNH-H* + * -> HNNH2* + *"
+        },
+        "37": {
+            "equation": "H*+ HNNH2* <->H-HNNH2* + * -> H2NNH2* + *"
+        },
+        "38": {
+            "equation": "H2NNH2*  -> N2H4_g + *"
+        },
+        "39": {
+            "equation": "HNNH2* + H*<-> HNNH2-H* + * -> HNNH3* + *"
+        },
+        "40": {
+            "equation": "H2NNH2* + H*<-> H2NNH2-H* + * -> H2NNH3* + *"
+        },
+        "41": {
+            "equation": "HNNH2* + *<-> NH-NH2* + * -> NH* + NH2*"
+        },
+        "42": {
+            "equation": "H2NNH2* + * <-> NH2-NH2* + * -> NH2* + NH2*"
+        },
+        "43": {
+            "equation": "HNNH3* + *<-> NH-NH3* + * -> NH* + NH3*"
+        },
+        "44": {
+            "equation": "H2NNH3* + *<-> NH2-NH3* + * -> NH2* + NH3*"
+        },
+        "45": {
+            "equation": "NO* + NO_g <-> ON-NO* -> ONNO*"
+        },
+        "46": {
+            "equation": "ONNO* + * <-> N2O-O* + * -> N2O*+ O*"
+        },
+        "47": {
+            "equation": "NO* + O*<-> NO-O* + * -> NO2* + *"
+        },
+        "48": {
+            "equation": "NH* + N*<->NH-N* + * -> NNH* + *"
+        },
+        "49": {
+            "equation": "H* + NNH* <-> H-NNH* + * -> HNNH* + *"
+        },
+        "50": {
+            "equation": "NO2_g + * -> NO2*"
+        },
+        "51": {
+            "equation": "NH3_g + * -> NH3*"
+        },
+    },
+    "default_thermo": {
+        "gas": "ideal_gas",
+        "adsorbate": "harmonic_adsorbate"
+    },
+    "mapper": {
+        "class": "Mapper2D",
+        "descriptors": {
+            "temperature": [
+                [300.0, 1000.0, 36]
+            ],
+            "log(pressure)": [
+                [-3.0, 3.0, 31]
+            ]
+        }
+    },
+    "parser": {
+        "class": "TableParser",
+        "input_file": "energies.txt"
+    },
+    "scaler": {
+        "class": "Scaler",
+        "surface_names": [
+            "Ni"
+        ]
+    },
+    "solver": {
+        "class": "SteadyStateSolver",
+        "tolerance": 1e-125,
+        "max_iterations": 1000
+    },
+    "guesser": [
+        "OriginalDataGuesser",
+        {
+            "class": "ODEGuesser",
+            "max_iterations": 500,
+            "trial_interval": 100
+        }
+    ],
+    "selectivity_tracking": ["N"],
+    "writer": [
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[N2H4_g]",
+            "output_file": "tof[N2H4_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[N2O_g]",
+            "output_file": "tof[N2O_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[N2_g]",
+            "output_file": "tof[N2_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[NH2OH_g]",
+            "output_file": "tof[NH2OH_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[NH3_g]",
+            "output_file": "tof[NH3_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[NO2_g]",
+            "output_file": "tof[NO2_g].csv"
+        }
+    ]
+}

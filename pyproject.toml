@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mukip"
+version = "0.4.0"
+description = "The Multi-scale Kinetic modeling Platform (MuKiP), a chemical kinetics simulation platform."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "JPype1==1.5.2",
+    "numpy>=1.23.5",
+    "matplotlib>=3.6.3"
+]
+license = {file = "LICENSE"}
+authors = [
+  {name = "Yonghua Liu", email = "liuyonghua@westlake.edu.cn"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/WestlakeUniversity-WangLab/MuKiP-pip"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["mukip"]
+
+[tool.setuptools.package-data]
+mukip = ["resources/*.jar"]

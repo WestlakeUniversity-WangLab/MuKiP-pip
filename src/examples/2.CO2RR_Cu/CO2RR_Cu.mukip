@@ -1,0 +1,154 @@
+{
+    "decimal_precision": 120,
+    "convergence_precision": 90,
+    "thermo": {},
+    "species": {
+        "CO2_g": {
+            "concentration": 0.1
+        },
+        "H2_g": {
+            "concentration": 0.8
+        },
+        "CO_g": {
+            "concentration": 0.1
+        },
+        "H2O_g": {
+            "concentration": 0.0
+        },
+        "HCOOH_g": {
+            "concentration": 0.0
+        },
+        "CH2O_g": {
+            "concentration": 0.0
+        },
+        "CH3OH_g": {
+            "concentration": 0.0
+        },
+        "HCOOCH3_g": {
+            "concentration": 0.0
+        },
+        "s": {
+            "total": 1
+        }
+    },
+    "reactions": {
+        "1": {"equation": "CO2_g+ * -> CO2*"},
+        "2": {"equation": "H2_g+ 2* -> 2H*"},
+        "3": {"equation": "CO_g + * -> CO*"},
+        "4": {"equation": "H2O_g + * -> H2O*"},
+        "5": {"equation": "HCOOH_g + * -> HCOOH*"},
+        "6": {"equation": "CH2O_g + * -> CH2O*"},
+        "7": {"equation": "CH3OH_g + * -> CH3OH*"},
+        "8": {"equation": "HCOOCH3_g + * -> HCOOCH3*"},
+        "9": {"equation": "CO* + O* <-> CO-O* + * -> CO2* + *"},
+        "10": {"equation": "CO* + OH* <-> CO-OH* + * -> COOH* + *"},
+        "11": {"equation": "COOH* + * <-> COO-H* + * -> CO2* + H*"},
+        "12": {"equation": "COOH* + OH* <-> COO-H-OH* + * -> CO2* + H2O*"},
+        "13": {"equation": "COOH* + H* <-> H-COOH* + * -> HCOOH* + *"},
+        "14": {"equation": "H2O* + * <-> H-OH* + * -> OH* + H*"},
+        "15": {"equation": "OH* + * <-> H-O* + * -> O* + H*"},
+        "16": {"equation": "2OH* <-> HO-H-O* + * -> H2O* + O*"},
+        "17": {"equation": "CO2* + H* <-> H-COO* + * -> HCOO* + *"},
+        "18": {"equation": "HCOO* + H* <-> H-HCOO* + * -> H2COO* + *"},
+        "19": {"equation": "HCOO* + H* <-> HCOO-H* + * -> HCOOH* + *"},
+        "20": {"equation": "HCOOH* + H* <-> H-HCOOH* + * -> CH3O2* + *"},
+        "21": {"equation": "H2COO* + H* <-> H2COO-H* + * -> CH3O2* + *"},
+        "22": {"equation": "H2COO* + * -> CH2O* + O*"},
+        "23": {"equation": "CH3O2* + * -> CH2O* + OH*"},
+        "24": {"equation": "CH2O* + H* <-> H-CH2O* + * -> CH3O* + *"},
+        "25": {"equation": "CH3O* + H* <-> CH3O-H* + * -> CH3OH* + *"},
+        "26": {"equation": "CO* + H* <-> H-CO* + * -> HCO* + *"},
+        "27": {"equation": "CO* + H* <-> CO-H* + * -> COH* + *"},
+        "28": {"equation": "HCOO* + * <-> HCO-O* + * -> HCO* + O*"},
+        "29": {"equation": "HCO* + H* <-> HCO-H* + * -> HCOH* + *"},
+        "30": {"equation": "HCO* + H* <-> H-CHO* + * -> CH2O* + *"},
+        "31": {"equation": "CH2O* + H* <-> CH2O-H* + * -> CH2OH* + *"},
+        "32": {"equation": "HCOH* + H* <-> H-CHOH* + * -> CH2OH* + *"},
+        "33": {"equation": "CH2OH* + H* <-> H-CH2OH* + * -> CH3OH* + *"},
+        "34": {"equation": "HCOOH* + * <-> HCO-OH* + * -> HCO* + OH*"},
+        "35": {"equation": "HCOOH* + * <-> O-CHOH* + * -> HCOH* + O*"},
+        "36": {"equation": "CH3O2* + * <-> O-CH2OH* + * -> CH2OH* + O*"},
+        "37": {"equation": "CO2* + O* <-> O-CO2* + * -> CO3* + *"},
+        "38": {"equation": "CO3* + H* <-> H-OCO2* + * -> HCO3* + *"},
+        "39": {"equation": "O* + HCO* <-> O-H-CO* + * -> OH* + CO*"},
+        "40": {"equation": "OH* + HCO* <-> OC-H-OH* + * -> H2O* + CO*"},
+        "41": {"equation": "HCOO* + HCO* <-> HCOO-H-CO* + * -> HCOOH* + CO*"},
+        "42": {"equation": "HCOO* + HCO* <-> OOCH-H-CO* + * -> H2COO* + CO*"},
+        "43": {"equation": "HCOOH* + HCO* <-> HOOCH-H-CO* + * -> CH3O2* + CO*"},
+        "44": {"equation": "CH2O* + HCO* <-> OC-H-CH2O* + * -> CH3O* + CO*"},
+        "45": {"equation": "CH3O* + HCO* <-> OC-H-OCH3* + * -> CH3OH* + CO*"},
+        "46": {"equation": "CH3O* + HCOO* <-> HCOO-CH3-O* + * -> HCOOCH3* + O*"},
+        "47": {"equation": "CH3O* + CH2O* <-> H2CO-OCH3* + * -> H2COOCH3* + *"},
+        "48": {"equation": "HCOOCH3* + H* <-> H-HCOOCH3* + * -> H2COOCH3* + *"},
+        "49": {"equation": "2CH2O* <-> CH2O-OCH2* + * -> HCOOCH3* + *"}
+    },
+    "default_thermo": {
+        "gas": "frozen_adsorbate",
+        "adsorbate": "frozen_adsorbate"
+    },
+    "mapper": {
+        "class": "Mapper2D",
+        "descriptors": {
+            "temperature": [
+                [
+                    200,
+                    800,
+                    31
+                ]
+            ],
+            "log(pressure)": [
+                [
+                    -3,
+                    3.0,
+                    31
+                ]
+            ]
+        },
+        "max_bisect": 50
+    },
+    "parser": {
+        "class": "TableParser",
+        "input_file": "energies.txt"
+    },
+    "scaler": {
+        "class": "Scaler",
+        "surface_names": [
+            "Cu"
+        ]
+    },
+    "solver": {
+        "class": "SteadyStateSolver",
+        "tolerance": 1e-200,
+        "max_iterations": 1000,
+        "error_threshold": 0.99
+    },
+    "guesser": [
+        "OriginalDataGuesser",
+        "ODEGuesser"
+    ],
+    "selectivity_tracking": [
+        "C"
+    ],
+    "writer": [
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[HCOOH_g]",
+            "output_file": "tof[HCOOH_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[CH2O_g]",
+            "output_file": "tof[CH2O_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[CH3OH_g]",
+            "output_file": "tof[CH3OH_g].csv"
+        },
+        {
+            "class": "CSV2DCustomWriter",
+            "expression": "tof[HCOOCH3_g]",
+            "output_file": "tof[HCOOCH3_g].csv"
+        }
+    ]
+}

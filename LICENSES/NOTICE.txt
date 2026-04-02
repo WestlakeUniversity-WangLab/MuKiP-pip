@@ -1,0 +1,49 @@
+=======================================================================
+Project Name: MuKiP
+Project Copyright: 2023-2026 Wang-Lab
+License: CC BY-NC-SA 4.0
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+This project includes the following third-party libraries:
+
+1. JAMA
+   URL: http://math.nist.gov/javanumerics/jama/
+   License: CC0 1.0 Public Domain
+   Copyright Notice:
+   This software is a cooperative product of The MathWorks and the National Institute of Standards and Technology (NIST) which has been released to the public domain.
+   Neither The MathWorks nor NIST assumes any responsibility whatsoever for its use by other parties, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic.
+
+2. big-decimal (Big-Math)
+   URL: https://github.com/eobermuhlner/big-math
+   License: MIT
+   Copyright (c) 2017 Eric Obermühlner
+   License URL: https://opensource.org/licenses/MIT
+
+3. Kotlin
+   URL: https://github.com/JetBrains/kotlin
+   License: Apache License 2.0
+   Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+   License URL: http://www.apache.org/licenses/LICENSE-2.0
+
+4. kotlinx.serialization
+   URL: https://github.com/Kotlin/kotlinx.serialization
+   License: Apache License 2.0
+   Copyright 2017-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+   License URL: http://www.apache.org/licenses/LICENSE-2.0
+
+5. kotlinx.coroutines
+   URL: https://github.com/Kotlin/kotlinx.coroutines
+   License: Apache License 2.0
+   Copyright 2017-2019 JetBrains s.r.o. and respective authors and developers
+   License URL: http://www.apache.org/licenses/LICENSE-2.0
+
+6. kotlin-json5
+   URL: https://github.com/lisonge/kotlin-json5
+   License: Apache License 2.0
+   Copyright 2023 JetBrains s.r.o. and and respective authors and developers.
+   License URL: http://www.apache.org/licenses/LICENSE-2.0
+
+=======================================================================
+Notes:
+- This file serves as an attribution notice to comply with the licenses of included third-party libraries.
+- For detailed terms and conditions, please refer to the original license files of each library.
