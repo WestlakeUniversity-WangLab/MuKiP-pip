@@ -19,6 +19,8 @@ to create and distribute custom addons.
 
 `pip install mukip`
 
+If your device cannot connect to the internet, you need to manually download and extract the JRE as instructed.
+
 ### System Requirements
 
 - **64-bit OS Required:** This application is designed exclusively for 64-bit systems.
