@@ -1,16 +1,18 @@
+// This is an example for MuKiP-0.5.0
+// reference: ACS Catal. 2021, 11, 23, 14545-14560
 {
-    "decimal_precision": 100,
-    "convergence_precision": 70,
-    "thermo": {
+    "decimal_precision": 120,
+    "convergence_precision": 100,
+    "parameter": {
         "temperature": 673,
         "pressure": 10
     },
     "species": {
         "H2_g": {
-            "concentration": 0.66666667
+            "concentration": "p * 2 / 3"
         },
         "CO_g": {
-            "concentration": 0.33333333
+            "concentration": "p / 3"
         },
         "s": {
             "total": 1
@@ -96,20 +98,20 @@
         "77": {"equation": "CH3CH2OH* -> CH3CH2OH_g + *"},
     },
     "default_thermo": {
-        "gas": "ideal_gas",
-        "adsorbate": "harmonic_adsorbate"
+        "Gas": "IdealGas",
+        "SurfaceSpecies": "Harmonic"
     },
     "mapper": {
         "class": "Mapper2D",
         "descriptors": {
-            "C_s": [
+            "E[C_s]": [
                 [
                     0.5,
                     4.5,
                     41
                 ]
             ],
-            "O_s": [
+            "E[O_s]": [
                 [
                     -1.5,
                     1.5,
@@ -119,13 +121,15 @@
         },
         "max_bisect": 50
     },
-    "parser": {
-        "class": "TableParser",
-        "input_file": "energies.txt"
-    },
+    "reader": [
+        {
+            "class": "EnergyTableReader",
+            "input_file": "energies.txt"
+        }
+    ],
     "scaler": {
         "class": "LinearScaler",
-        "surface_names": [
+        "surfaces": [
             "Co",
             "Fe",
             "Pt",
@@ -137,13 +141,10 @@
         ]
     },
     "solver": {
-        "class": "SteadyStateSolver",
-        "tolerance": 1e-75,
-        "max_iterations": 1000,
-        "error_threshold": 0.99
+        "class": "SteadyStateSolver"
     },
     "guesser": [
-        "OriginalDataGuesser",
+        "OriginalDataGuess",
         "BoltzmannGuesser"
     ],
     "selectivity_tracking": [
@@ -151,29 +152,40 @@
     ],
     "writer": [
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH2CH2_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH2CH2_g",
             "output_file": "tof[CH2CH2_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3CH2OH_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3CH2OH_g",
             "output_file": "tof[CH3CH2OH_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3CH3_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3CH3_g",
             "output_file": "tof[CH3CH3_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3OH_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3OH_g",
             "output_file": "tof[CH3OH_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH4_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH4_g",
             "output_file": "tof[CH4_g].csv"
+        },
+        {
+            "class": "CSV2DWriter",
+            "data_type": "selectivity",
+            "data_name": "CH2CH2_g",
+            "output_file": "selectivity[CH2CH2_g].csv"
         }
     ]
 }

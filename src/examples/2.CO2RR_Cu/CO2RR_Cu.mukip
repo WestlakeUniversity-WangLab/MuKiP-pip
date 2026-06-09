@@ -1,31 +1,18 @@
+// This is an example for MuKiP-0.5.0
+// reference: ACS Catal. 2011, 1, 4, 365-384
 {
     "decimal_precision": 120,
     "convergence_precision": 90,
-    "thermo": {},
+    "parameter": {},
     "species": {
         "CO2_g": {
-            "concentration": 0.1
+            "concentration": "0.1 * p"
         },
         "H2_g": {
-            "concentration": 0.8
+            "concentration": "0.8 * p"
         },
         "CO_g": {
-            "concentration": 0.1
-        },
-        "H2O_g": {
-            "concentration": 0.0
-        },
-        "HCOOH_g": {
-            "concentration": 0.0
-        },
-        "CH2O_g": {
-            "concentration": 0.0
-        },
-        "CH3OH_g": {
-            "concentration": 0.0
-        },
-        "HCOOCH3_g": {
-            "concentration": 0.0
+            "concentration": "0.1 * p"
         },
         "s": {
             "total": 1
@@ -83,8 +70,7 @@
         "49": {"equation": "2CH2O* <-> CH2O-OCH2* + * -> HCOOCH3* + *"}
     },
     "default_thermo": {
-        "gas": "frozen_adsorbate",
-        "adsorbate": "frozen_adsorbate"
+        "Species": "Frozen"
     },
     "mapper": {
         "class": "Mapper2D",
@@ -106,49 +92,59 @@
         },
         "max_bisect": 50
     },
-    "parser": {
-        "class": "TableParser",
-        "input_file": "energies.txt"
-    },
+    "reader": [
+        {
+            "class": "EnergyTableReader",
+            "input_file": "energies.txt"
+        }
+    ],
     "scaler": {
-        "class": "Scaler",
-        "surface_names": [
-            "Cu"
-        ]
+        "class": "Scaler"
     },
     "solver": {
-        "class": "SteadyStateSolver",
-        "tolerance": 1e-200,
-        "max_iterations": 1000,
-        "error_threshold": 0.99
+        "class": "SteadyStateSolver"
     },
     "guesser": [
-        "OriginalDataGuesser",
-        "ODEGuesser"
+        "OriginalDataGuess",
+        {
+            "class": "ODEGuesser",
+            "max_iterations": 1000,
+            "trial_interval": 100
+        }
     ],
     "selectivity_tracking": [
         "C"
     ],
     "writer": [
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[HCOOH_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "HCOOH_g",
             "output_file": "tof[HCOOH_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH2O_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH2O_g",
             "output_file": "tof[CH2O_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3OH_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3OH_g",
             "output_file": "tof[CH3OH_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[HCOOCH3_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "HCOOCH3_g",
             "output_file": "tof[HCOOCH3_g].csv"
+        },
+        {
+            "class": "CSV2DWriter",
+            "data_type": "selectivity",
+            "data_name": "CH3OH_g",
+            "output_file": "selectivity[CH3OH_g].csv"
         }
     ]
 }

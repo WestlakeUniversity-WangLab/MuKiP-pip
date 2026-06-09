@@ -30,7 +30,7 @@ def to_float_or_nan(s):
     except ValueError:
         return np.nan
 
-def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_kw=None):
+def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_kw=None, data_type=None, annotation=None):
     # Read raw data
     data = read_csv_matrix(csv_path)
     title = os.path.splitext(os.path.basename(csv_path))[0]
@@ -72,8 +72,10 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
     # Create meshgrid
     X, Y = np.meshgrid(x_vals, y_vals)
 
-    # Check for non-positive values (log undefined for <= 0)
-    Z = np.log10(Z)
+    # log z for special types
+    if data_type in ['TOF']:
+        Z = np.log10(Z)
+        title = f"log({title})"
 
     # Plot
     if not fig_size:
@@ -90,12 +92,24 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
     plt.clabel(contour, **clabel_kw)
 
     if not contourf_kw:
-        contourf_kw = {'levels': 31, 'cmap': 'jet'}
+        if data_type == "Degree of rate control":
+            cmap = 'coolwarm'
+        elif data_type == "selectivity":
+            cmap = 'autumn_r'
+        else:
+            cmap = 'jet'
+        contourf_kw = {'levels': 31, 'cmap': cmap}
     filled = plt.contourf(X, Y, Z, **contourf_kw)
     plt.colorbar(filled)
 
+    if annotation:
+        for text, pos in annotation.items():
+            x, y = pos
+            plt.plot(x, y, 'o', color='k', markersize=4)
+            plt.annotate(text, xy=(x, y), fontsize=16)
+
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.title(f'log({title})')
+    plt.title(title)
     plt.tight_layout()
     plt.savefig(csv_path.replace('.csv', '.png'))

@@ -17,7 +17,7 @@ from jpype import JClass
 # Package root directory
 PACKAGE_DIR = Path(__file__).parent
 JRE_DIR = PACKAGE_DIR / "jre24"
-JAR_FILE = PACKAGE_DIR / "resources" / "mukip-0.4.0-beta-all.jar"
+JAR_FILE = PACKAGE_DIR / "resources" / "mukip-0.5.0-beta-all.jar"
 
 MUKIP_INITIALIZED = False
 

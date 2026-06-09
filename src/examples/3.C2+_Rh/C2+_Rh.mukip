@@ -1,13 +1,15 @@
+// This is an example for MuKiP-0.5.0
+// reference: jacs,2016,138,11,3705-3714
 {
     "decimal_precision": 100,
     "convergence_precision": 70,
-    "thermo": {},
+    "parameter": {},
     "species": {
         "H2_g": {
-            "concentration": 0.33333333
+            "concentration": "p / 3"
         },
         "CO_g": {
-            "concentration": 0.66666667
+            "concentration":"p * 2 / 3"
         },
         "s": {
             "total": 1
@@ -36,8 +38,7 @@
         "17": {"equation": "CH3CH2OH* -> CH3CH2OH_g + *"},
     },
     "default_thermo": {
-        "gas": "frozen_gas",
-        "adsorbate": "frozen_adsorbate"
+        "Species": "Frozen"
     },
     "mapper": {
         "class": "Mapper2D",
@@ -59,24 +60,20 @@
         },
         "max_bisect": 50
     },
-    "parser": {
-        "class": "TableParser",
-        "input_file": "energies.txt"
-    },
+    "reader": [
+        {
+            "class": "EnergyTableReader",
+            "input_file": "energies.txt"
+        }
+    ],
     "scaler": {
-        "class": "Scaler",
-        "surface_names": [
-            "Rh(111)"
-        ]
+        "class": "Scaler"
     },
     "solver": {
-        "class": "SteadyStateSolver",
-        "tolerance": 1e-75,
-        "max_iterations": 1000,
-        "error_threshold": 0.99
+        "class": "SteadyStateSolver"
     },
     "guesser": [
-        "OriginalDataGuesser",
+        "OriginalDataGuess",
         {
             "class": "ODEGuesser",
             "max_iterations": 100
@@ -87,19 +84,28 @@
     ],
     "writer": [
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3CH2OH_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3CH2OH_g",
             "output_file": "tof[CH3CH2OH_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH3CHO_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH3CHO_g",
             "output_file": "tof[CH3CHO_g].csv"
         },
         {
-            "class": "CSV2DCustomWriter",
-            "expression": "tof[CH4_g]",
+            "class": "CSV2DWriter",
+            "data_type": "TOF",
+            "data_name": "CH4_g",
             "output_file": "tof[CH4_g].csv"
+        },
+        {
+            "class": "CSV2DWriter",
+            "data_type": "selectivity",
+            "data_name": "CH3CH2OH_g",
+            "output_file": "selectivity[CH3CH2OH_g].csv"
         }
     ]
 }

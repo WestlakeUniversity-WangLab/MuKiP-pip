@@ -30,6 +30,11 @@ If your device cannot connect to the internet, you need to manually download and
 - **macOS (AArch64):** There is a known stability issue on ARM64 architecture (Apple Silicon). 
   Users may experience random crashes (`SIGBUS`). Use at your own risk.
 
+## Format of Setup file
+
+The reaction network, parameters, and workflow are all defined in a setup file. The program initializes by reading this
+file. For the setup file specification, please refer to [Format](docs/Format.md), or adapt the files in examples.
+
 ## Examples
 
 Example scripts demonstrating the usage of `mukip` are available in the GitHub repository.
