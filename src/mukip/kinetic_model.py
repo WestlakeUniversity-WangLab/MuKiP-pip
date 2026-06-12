@@ -74,7 +74,7 @@ class KineticModel:
         """
         return _wrap_parameter(self._get_grid_point(*index).getParameter())
 
-    def run(self, method: Literal['map_sample', 'map_in_turn', 'map_expand', 'map_check', 'map_drc']='map_sample', n_thread: int = n_cpu):
+    def run(self, method: Literal['map_sample', 'map_in_turn', 'map_expand', 'map_check', 'map_drc']='map_sample', n_thread: int = n_cpu*2):
         """
         Run the kinetic model with given method.
         Methods:

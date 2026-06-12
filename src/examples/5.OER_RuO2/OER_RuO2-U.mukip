@@ -21,9 +21,6 @@
         "H:+_aq": {
             "concentration": "10 ^ (-pH)"
         },
-        "H2_g": {
-            "concentration": 0.0
-        },
         "O2_g": {
             "concentration": 0.0
         },
@@ -66,9 +63,9 @@
         "descriptors": {
             "U": [
                 [
-                    1.2,
-                    2.0,
-                    81
+                    1.0,
+                    2.2,
+                    121
                 ]
             ]
         }

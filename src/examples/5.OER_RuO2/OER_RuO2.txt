@@ -1,6 +1,6 @@
 formation_energy: eV
 frequencies: cm-1
-reference: J. Phys. Chem. Lett., 16(35), 8986-8993
+reference: J. Phys. Chem. Lett., 2025, 16(35), 8986-8993
 surface	species	formation_energy	frequencies
 None	H2_g	0.000	[4401.2]
 None	O2_g	5.483	[1580.2]

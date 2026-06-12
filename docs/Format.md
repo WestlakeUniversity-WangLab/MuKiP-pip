@@ -160,6 +160,10 @@ If set to `true`, this reaction is ignored.
 
 The pre‑exponential factor (Arrhenius prefactor). If omitted, the transition state theory prefactor `kBT/h` is used.
 
+### `hertz_knudsen` (boolean, default = `false`)
+
+Whether to use Hertz-Knudsen equation to replace the prefactor. `Acat` (the area of a site, in square meter) and `p0` (reference presser, 1e5 usually) must be set in parameters.
+
 ### `correction` (algebraic expression, default = `1`)
 
 An extra multiplicative factor in the reaction rate expression.  
@@ -455,10 +459,6 @@ Names of the species to include in the DRC calculation. Special values:
 ### `excepted_species` (JSON array, default = empty array)
 
 Species names to exclude from the DRC calculation.
-
-### `target_tof` (JSON array)
-
-The TOF(s) to use for the DRC calculation. Must be fluid species.
 
 ### `target_tof` (JSON array)
 

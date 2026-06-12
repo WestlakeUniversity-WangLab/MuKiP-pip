@@ -1,10 +1,17 @@
 // This is an example for MuKiP-0.5.0
 // reference: J. Catal. 2024, 439
+// In this model, the Hertz-Knudsen equation can be enabled. Please read the comments and uncomment the necessary code.
 {
     "decimal_precision": 120,
     "convergence_precision": 100,
     "extra_molecules": "NORR.json",
-    "parameter": {},
+    "parameter": {
+        // Necessary parameters to enable Hertz-Knudsen equation.
+        // "Acat": 2.776e-20,
+        // "p0": 1e5,
+        // Parameters to enable Hertz-Knudsen equation in prefactor form.
+        // "sqrt_2pikB_NA": 1.2002e-23 // =sqrt(2 * pi * kB / NA)
+    },
     "species": {
         "H2_g": {
             "concentration": "0.5 * p"
@@ -17,20 +24,37 @@
         }
     },
     "reactions": {
-        "1": {"equation": "NO_g + * -> NO*"},
+        "1": {
+            "equation": "NO_g + * -> NO*",
+            // "hertz_knudsen": true
+            // The following method is equivalent. Where 30 is the molecular weight of NO.
+            // "prefactor": "Acat * p0 / sqrt_2pikB_NA / (30 * T)^0.5"
+        },
         "2": {"equation": "NO* + * <-> N-O* + * -> N*+O*"},
-        "3": {"equation": "H2_g + 2* <-> H-H* + * -> H* + H*"},
+        "3": {
+            "equation": "H2_g + 2* <-> H-H* + * -> H* + H*",
+            // "hertz_knudsen": true
+        },
         "4": {"equation": "N* + N* <-> N-N* + * -> N2* + *"},
-        "5": {"equation": "N2*  -> N2_g + *"},
+        "5": {
+            "equation": "N2*  -> N2_g + *",
+            // "hertz_knudsen": true
+        },
         "6": {"equation": "O* + O* <-> O-O* + * -> O2* + *"},
-        "7": {"equation": "O2*  -> O2_g + *"},
+        "7": {
+            "equation": "O2*  -> O2_g + *",
+            // "hertz_knudsen": true
+        },
         "8": {"equation": "O* + H* <-> O-H* + * -> OH* + *"},
         "9": {"equation": "OH* + H* <-> OH-H* + * -> H2O* + *"},
         "10": {
             "equation": "OH* + OH* <-> OH-OH* + * -> H2O* + O*",
             "disabled": true
         },
-        "11": {"equation": "H2O*  -> H2O_g + *"},
+        "11": {
+            "equation": "H2O*  -> H2O_g + *",
+            // "hertz_knudsen": true
+        },
         "12": {"equation": "N* + H* <-> N-H* + * -> NH* + *"},
         "13": {"equation": "NH* + H* <-> NH-H* + * -> NH2* + *"},
         "14": {"equation": "NH2* + H* <-> NH2-H* + * -> NH3* + *"},
@@ -46,31 +70,49 @@
         "24": {"equation": "H* +NHO* <-> H-NHO* + * -> NH2O* + *"},
         "25": {"equation": "NH2O* + * <-> NH2-O* + * -> NH2* + O*"},
         "26": {"equation": "NH2O* + H* <-> NH2O-H* + * -> NH2OH* + *"},
-        "27": {"equation": "NH2OH*  -> NH2OH_g + *"},
+        "27": {
+            "equation": "NH2OH*  -> NH2OH_g + *",
+            // "hertz_knudsen": true
+        },
         "28": {"equation": "H* + NH2O* <-> H-NH2O* + * -> NH3O* + *"},
         "29": {"equation": "NH3O* + * <-> NH3-O* + * -> NH3* + O*"},
         "30": {"equation": "NO* + N* <-> NO-N* + * -> N2O* + *"},
-        "31": {"equation": "N2O*  -> N2O_g + *"},
+        "31": {
+            "equation": "N2O*  -> N2O_g + *",
+            // "hertz_knudsen": true
+        },
         "32": {"equation": "N2O* + * <-> N2-O* + * -> N2* + O*"},
         "33": {"equation": "NO* + NH* <-> NO-NH* + * -> HNNO* + *"},
         "34": {"equation": "HNNO* + * <-> H-NNO* + * -> H* + N2O*"},
         "35": {"equation": "NH* + NH* <-> NH-NH* + * -> HNNH* + *"},
         "36": {"equation": "HNNH* + H*<-> HNNH-H* + * -> HNNH2* + *"},
         "37": {"equation": "H*+ HNNH2* <->H-HNNH2* + * -> H2NNH2* + *"},
-        "38": {"equation": "H2NNH2*  -> N2H4_g + *"},
+        "38": {
+            "equation": "H2NNH2*  -> N2H4_g + *",
+            // "hertz_knudsen": true
+        },
         "39": {"equation": "HNNH2* + H*<-> HNNH2-H* + * -> HNNH3* + *"},
         "40": {"equation": "H2NNH2* + H*<-> H2NNH2-H* + * -> H2NNH3* + *"},
         "41": {"equation": "HNNH2* + *<-> NH-NH2* + * -> NH* + NH2*"},
         "42": {"equation": "H2NNH2* + * <-> NH2-NH2* + * -> NH2* + NH2*"},
         "43": {"equation": "HNNH3* + *<-> NH-NH3* + * -> NH* + NH3*"},
         "44": {"equation": "H2NNH3* + *<-> NH2-NH3* + * -> NH2* + NH3*"},
-        "45": {"equation": "NO* + NO_g <-> ON-NO* -> ONNO*"},
+        "45": {
+            "equation": "NO* + NO_g <-> ON-NO* -> ONNO*",
+            // "hertz_knudsen": true
+        },
         "46": {"equation": "ONNO* + * <-> N2O-O* + * -> N2O*+ O*"},
         "47": {"equation": "NO* + O*<-> NO-O* + * -> NO2* + *"},
         "48": {"equation": "NH* + N*<->NH-N* + * -> NNH* + *"},
         "49": {"equation": "H* + NNH* <-> H-NNH* + * -> HNNH* + *"},
-        "50": {"equation": "NO2_g + * -> NO2*"},
-        "51": {"equation": "NH3_g + * -> NH3*"}
+        "50": {
+            "equation": "NO2_g + * -> NO2*",
+            // "hertz_knudsen": true
+        },
+        "51": {
+            "equation": "NH3_g + * -> NH3*",
+            // "hertz_knudsen": true
+        }
     },
     "default_thermo": {
         "Gas": "IdealGas",

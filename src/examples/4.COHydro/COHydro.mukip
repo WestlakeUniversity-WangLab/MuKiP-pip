@@ -4,8 +4,8 @@
     "decimal_precision": 120,
     "convergence_precision": 100,
     "parameter": {
-        "temperature": 673,
-        "pressure": 10
+        "temperature": 483,
+        "pressure": 1.85
     },
     "species": {
         "H2_g": {
