@@ -2,18 +2,14 @@
 
 # MuKiP
 
-The **Mu**lti-scale **Ki**netic modeling **P**latform (MuKiP) is a chemical 
-kinetics simulation platform written in Kotlin/Java and Published on PyPI, 
-developed by the T. Wang's group at Westlake University. 
-This platform currently focuses on efficient descriptor-based 
-microkinetic simulations, while tending to enable 
-multiple multi-scale modules in the future that will integrate factors 
-such as electrochemistry, reactor dynamics, and mass transport. 
-Designed for modular construction of multi-scale kinetic models, 
-it aims to automate equation system assembly through algebraic modules 
-and solve them efficiently with advanced algorithms. 
-The platform also provides open interfaces, allowing third-party developers 
-to create and distribute custom addons.
+The **Mu**lti-scale **Ki**netic modeling **P**latform (MuKiP) is a comprehensive software toolkit designed for 
+addressing complex physicochemical processes at three-phase interfaces in heterogeneous catalysis, currently under 
+development by Prof. Tao Wang’s group at Westlake University. It is written in Kotlin/Java and published on PyPI. 
+The first release of this platform currently focuses on efficient descriptor-based microkinetic modeling and will, 
+in the future, enable multiple multi-scale modules that integrate factors such as electrochemistry, reactor kinetics, 
+and mass transport. Designed for modular construction of multi-scale kinetic models, it aims to automate the assembly 
+of systems of equations using algebraic modules and to solve them efficiently with advanced algorithms. The platform 
+also provides open interfaces, allowing third-party developers to create and distribute custom addons.
 
 ## Install
 
