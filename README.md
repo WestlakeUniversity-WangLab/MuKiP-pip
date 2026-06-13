@@ -64,6 +64,11 @@ If you use this software in your research, please cite the following paper:
 
 > [Not published yet](https://doi.org/)
 
+## Future Plans
+
+More advanced functionalities, including reactor kinetics modeling, electrochemical kinetics modeling, and continuum transport models, 
+will soon be released also in a comprehensive and efficient way.
+
 ## 📜 License
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International 
@@ -72,9 +77,8 @@ See the full text here: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/b
 
 ## Acknowledgement
 
-This project was inspired by [CatMAP](https://github.com/SUNCAT-Center/catmap).
-While the overall program structure and design ideas were influenced by this project, 
-all implementation in this repository was written independently.
+The descriptor-based microkinetic modeling part was inspired by [CatMAP](https://github.com/SUNCAT-Center/catmap).
+All implementations in this repository were written independently in Kotlin.
 
 
 
