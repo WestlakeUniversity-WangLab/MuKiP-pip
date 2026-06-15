@@ -1,4 +1,4 @@
-// This is an example for MuKiP-0.5.0
+// This is an example for MuKiP-0.5.1
 // reference: J. Catal. 2024, 439
 // In this model, the Hertz-Knudsen equation can be enabled. Please read the comments and uncomment the necessary code.
 {

@@ -1,4 +1,4 @@
-# run `pip install mukip == 0.5.0` at the terminal
+# run `pip install mukip == 0.5.1` at the terminal
 import mukip
 
 # Create an instance of MicrokineticModel with the path to the setup file
