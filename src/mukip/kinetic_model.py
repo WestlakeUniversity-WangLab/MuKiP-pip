@@ -190,7 +190,7 @@ class KineticModel:
         expressions = self.model.getSolver().getExpressionDictionary()
         buffer = self.LinkedHashMap()
         for k, v in expressions.items():
-            results[k] = self._to_float(v.arithmetic(variables, expressions, buffer))
+            results[k] = self._to_float(v.evaluate(variables, expressions, buffer))
         return results
 
     def get_DRC_info_at(self, *index: int):

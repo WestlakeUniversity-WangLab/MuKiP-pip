@@ -25,6 +25,10 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/WestlakeUniversity-WangLab/MuKiP-pip"
 
+[project.scripts]
+mukip = "mukip.cli:main"
+mukip-server = "mukip.server:main"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["mukip"]
