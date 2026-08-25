@@ -75,14 +75,14 @@
     "mapper": {
         "class": "Mapper2D",
         "descriptors": {
-            "temperature": [
+            "T": [
                 [
                     200,
                     800,
                     31
                 ]
             ],
-            "log(pressure)": [
+            "log(p)": [
                 [
                     -3,
                     3.0,
