@@ -134,6 +134,22 @@ Elements are components of type [`Modifier`](#Modifier), which can modify calcul
 ### `writer` (JSON array)
 Elements are components of type [`Writer`](#Writer), which write data to output files.
 
+### `selectivity_tracking` (JSON array of strings, optional, default = empty array)
+
+Atom symbols used to track selectivity. Each element is a valid atom symbol (e.g. `"C"`, `"O"`). When this list is
+non‑empty, the program derives a selectivity weight for every fluid species by summing how many of the tracked atoms
+the species contains, and makes the `"selectivity"` data type available to writers and plots.
+
+### `selectivity_colors` (JSON object, optional, default = empty object)
+
+Colors for the selectivity plot. Keys are names, values are RGB triples of the form `[red, green, blue]`, where each
+component is an integer between `0` and `255`.
+
+### `init_at_start` (boolean, default = `false`)
+
+If `true`, the point constants are evaluated as soon as each grid point is created; otherwise they are evaluated lazily
+when first needed.
+
 # Reaction
 
 `Reaction` is a component that represents an elementary reaction. It forms the building block of the reaction network and is responsible for generating its own rate expression. The component itself is the only implementation and also the default one.
@@ -345,6 +361,11 @@ Common fields:
 If the ratio between the residuals of two consecutive iterations is greater than this value, the solver considers it as non‑convergent.  
 This value can be adjusted between 0 and 1. The closer to 1, the less likely it is to falsely declare non‑convergence – but the solver may waste more time on failed attempts.
 
+### `norm` (enum, default = `AbsoluteMaximum`)
+
+The residual norm used to measure convergence. Available values: `AbsoluteMaximum`, `AbsoluteAverage`,
+`AbsoluteDegreeMaximum`, `DegreeRootMeanSquare`, `AbsoluteAverageAndMax`, `AbsoluteMaxPercent10`.
+
 ### `expressions` (JSON object)
 
 Custom expressions. Keys are variable names, values are expressions. These can override existing expressions.
@@ -354,9 +375,13 @@ Custom expressions. Keys are variable names, values are expressions. These can o
 If `true`, the solver first attempts to solve the Jacobian matrix using double‑precision numbers.  
 For models with a convergence precision around 30 decimal places, this can significantly speed up calculations. For higher‑precision models, it may reduce efficiency.
 
+### `use_lm` (boolean, default = `false`)
+
+If `true`, the solver uses the Levenberg‑Marquardt algorithm instead of Newton’s method as the primary solver.
+
 ### `mixed_lm` (boolean, default = `false`)
 
-Whether to use the Levenberg‑Marquardt algorithm for solving.  
+Whether to automatically switch between Newton’s method and the Levenberg‑Marquardt algorithm when convergence stalls.  
 Enable this when numerical instability occurs and the SEM method also fails. It may improve the chance of convergence, but will consume more time.
 
 ## SteadyStateSolver
@@ -373,9 +398,60 @@ User-defined additional variables. Array elements are variable names. Variable n
 
 User-defined additional equations. Array elements are algebraic expressions of the equations (no need to write the equals sign; the actual equation is the algebraic expression = 0). These equations will be combined with the steady-state approximation equations and solved. The length of the array must match that of `extra_variables`.
 
+## CSTRSolver
+
+Inherits from `SteadyStateSolver`. This solver models a continuous stirred‑tank reactor (CSTR): gases are treated as the reactor effluent, and their steady‑state outlet pressures are solved together with the adsorbate coverages. For each gas species, the inlet pressure (its `concentration`) plus the net production by reactions, scaled by the reactor residence time, equals the outlet pressure.
+
+It includes the base fields of `SteadyStateSolver` plus the following fields:
+
+### `area` (algebraic expression, optional)
+
+The catalyst area. Used to compute `n_sites` when `n_sites` is not given.
+
+### `flow_rate` (algebraic expression, optional)
+
+The volumetric flow rate. Used to compute the residence time, so it must be provided for a CSTR calculation.
+
+### `site_density` (algebraic expression, optional)
+
+The site density. Used to compute `n_sites` when `n_sites` is not given.
+
+### `n_sites` (algebraic expression, optional)
+
+The total number of sites. If omitted, it defaults to `area * site_density`.
+
+### `n_site_scale` (algebraic expression, default = `1`)
+
+A correction factor multiplied onto the total number of sites. Because the other reactor parameters (`area`,
+`site_density`, `flow_rate`, etc.) can each accumulate significant error, this factor allows the overall result to be
+corrected without changing those parameters individually.
+
+## PFRSolver
+
+Inherits from `SteadyStateSolver`. This solver models a plug‑flow reactor (PFR). Starting from the inlet gas pressures, it integrates the gas‑phase pressures along the reactor using the stiff Radau IIA ODE solver, while solving the adsorbate coverages at steady state at every integration step. The result is the reactor outlet at the given residence time.
+
+It includes the base fields of `SteadyStateSolver` plus the following fields:
+
+### `n_sites` (algebraic expression)
+
+The total number of sites. This field is required for the PFR calculation (it has no default value).
+
+### `n_site_scale` (algebraic expression, default = `1`)
+
+A correction factor multiplied onto the total number of sites. As in `CSTRSolver`, this factor can be used to correct
+errors accumulated by the other parameters.
+
+### `volume` (algebraic expression, default = `1`)
+
+The reactor volume.
+
+### `time` (algebraic expression)
+
+The residence time (the integration time) of the reactor. This field is required.
+
 ## GasPhaseEquilibriumSolver
 
-Inherits from `NewtonSolver`. This solver calculates the composition of a gas‑phase reaction after it reaches thermal equilibrium.
+Inherits from `Solver`. This solver calculates the composition of a gas‑phase reaction after it reaches thermal equilibrium. It adds no fields beyond those of `Solver`.
 
 # Guesser
 
@@ -399,6 +475,12 @@ It contains the following fields:
 
 The coarse tolerance. When the residual falls below this value, the guesser becomes ready to provide an initial guess.
 
+### `norm` (enum, default = `AbsoluteMaximum`)
+
+The residual norm used to measure the error. Available values are the same as for `NewtonSolver`:
+`AbsoluteMaximum`, `AbsoluteAverage`, `AbsoluteDegreeMaximum`, `DegreeRootMeanSquare`, `AbsoluteAverageAndMax`,
+`AbsoluteMaxPercent10`.
+
 ### `max_iterations` (integer, default = `1000`)
 
 The maximum number of iterations allowed.
@@ -406,6 +488,36 @@ The maximum number of iterations allowed.
 ### `trial_interval` (integer, default = `100`)
 
 The minimum number of iterations between successive attempts to provide an initial guess.
+
+### `step_constraint` (float, default = `0.9`)
+
+A factor between 0 and 1 that limits the size of each time step relative to the maximum step allowed by the ODE solver.
+
+## RadauGuesser
+
+Uses the stiff Radau IIA ODE solver to integrate the microkinetic ODE system in time, and uses the result as the initial guess. It is similar to `ODEGuesser`, but relies on the implicit Radau IIA method (more suitable for stiff systems) and stops when the coverages no longer change with time.
+
+It contains the following fields:
+
+### `rough_tolerance` (float, default = `10`, unit = `s^-1`)
+
+The coarse tolerance. When the residual norm falls below this value, the guesser becomes ready to provide an initial guess.
+
+### `norm` (enum, default = `AbsoluteMaximum`)
+
+The residual norm used to measure the error. Available values are the same as for `NewtonSolver`.
+
+### `max_iterations` (integer, default = `100`)
+
+The maximum number of integration steps allowed.
+
+### `trial_interval` (integer, default = `5`)
+
+The minimum number of integration steps between successive attempts to provide an initial guess.
+
+### `step_constraint` (float, default = `0.9`)
+
+A factor between 0 and 1 that limits the size of each integration step.
 
 # Scaler
 
@@ -468,9 +580,18 @@ The TOF(s) to use for the DRC calculation. Must be fluid species. `A_g` here is 
 
 Customized items to use for the DRC calculation. Each item has a name (key) and an algebraic expression (value).
 
+### `process_expressions` (JSON object, default = empty object)
+
+Additional process variables to perturb in the DRC calculation. Keys are variable names (they may also be descriptor
+names), and values are algebraic expressions used as the scale of the perturbation.
+
 ### `delta` (float, default = `1E-10`)
 
 The amount by which the species’ free energy is changed when computing the DRC. Normally no need to modify this value.
+
+### `high_precision` (boolean, default = `false`)
+
+Whether to enable high‑precision computation for the DRC calculation.
 
 # Writer
 
@@ -514,7 +635,7 @@ A `Writer` suitable for `Mapper1D`. It evaluates multiple custom expressions at 
 
 Additional field:
 
-### `expressions` (JSON array)
+### `expressions` (JSON object)
 
 Custom expressions. Each item has a name (key) and an algebraic expression (value).
 

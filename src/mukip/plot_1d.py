@@ -8,10 +8,9 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
-def plot_1d(csv_path, fig_size=None, plot_kw=None, data_type=None, annotation=None):
+def plot_1d(csv_path, fig_size=None, dpi=None, plot_kw=None, data_type=None, annotation=None):
     # Read raw data
     data = read_csv_matrix(csv_path)
-    title = os.path.splitext(os.path.basename(csv_path))[0]
 
     if not data or len(data) < 2 or len(data[0]) < 2:
         raise ValueError("Invalid CSV format: at least a 2x2 grid (including header) is required.")
@@ -32,12 +31,13 @@ def plot_1d(csv_path, fig_size=None, plot_kw=None, data_type=None, annotation=No
     # log z for special types
     if data_type in ['TOF']:
         plt.yscale('log')
-        title = f"log({title})"
 
     # Plot
     if not fig_size:
         fig_size = (9, 6)
-    plt.figure(figsize=fig_size)
+    if dpi is None:
+        dpi = 100
+    plt.figure(figsize=fig_size, dpi=dpi)
 
     if not plot_kw:
         plot_kw = {}

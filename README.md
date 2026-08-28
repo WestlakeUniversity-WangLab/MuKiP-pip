@@ -23,8 +23,13 @@ If your device cannot connect to the internet, you need to manually download and
 
 ### ⚠️ Known Issues
 
-- **macOS (AArch64):** There is a known stability issue on ARM64 architecture (Apple Silicon). 
-  Users may experience random crashes (`SIGBUS`). Use at your own risk.
+- **macOS (Apple Silicon):** This program has known stability issues when run natively on ARM64 architecture and may 
+cause random `SIGBUS` crashes. To avoid this, always execute the program under x86_64 emulation by using the 
+`arch -x86_64` prefix, e.g., `arch -x86_64 python your_script.py`. It is crucial that all Python dependencies 
+(such as `matplotlib`) are also installed for x86_64. The simplest way is to open an x86_64 shell with 
+`arch -x86_64 /bin/zsh` (or `/bin/bash`), then install all required packages via `pip install -r requirements.txt` 
+inside that shell. This ensures both the program and its libraries run in the same x86_64 environment and prevents 
+architecture mismatch issues.
 
 ## Format of Setup file
 

@@ -30,7 +30,8 @@ def to_float_or_nan(s):
     except ValueError:
         return np.nan
 
-def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_kw=None, data_type=None, annotation=None):
+def plot_2d(csv_path, fig_size=None, dpi=None, contour_kw=None, clabel_kw=None, contourf_kw=None, data_type=None,
+            annotation=None):
     # Read raw data
     data = read_csv_matrix(csv_path)
     title = os.path.splitext(os.path.basename(csv_path))[0]
@@ -62,7 +63,7 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
         while len(z_row) < len(x_vals):
             z_row.append(np.nan)
         z_rows.append(z_row[:len(x_vals)])
-    
+
     Z = np.array(z_rows, dtype=float)
 
     # Validate dimensions
@@ -80,11 +81,18 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
     # Plot
     if not fig_size:
         fig_size = (9, 6)
-    plt.figure(figsize=fig_size)
+    if dpi is None:
+        dpi = 100
+    plt.figure(figsize=fig_size, dpi=dpi)
+
+    levels = 41
+    if data_type == "Degree of rate control":
+        vmax_abs = min(np.nanmax(np.abs(Z)), 5.0)
+        levels = np.linspace(-vmax_abs, vmax_abs, levels)
 
     # Use LogNorm for logarithmic color scale
     if not contour_kw:
-        contour_kw = {'levels': 31, 'colors': 'black', 'linewidths': 0.5}
+        contour_kw = {'levels': levels, 'colors': 'black', 'linewidths': 0.5}
     contour = plt.contour(X, Y, Z, **contour_kw)
 
     if not clabel_kw:
@@ -93,12 +101,11 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
 
     if not contourf_kw:
         if data_type == "Degree of rate control":
-            cmap = 'coolwarm'
+            contourf_kw = {'levels': levels, 'cmap': 'coolwarm', 'extend': 'both'}
         elif data_type == "selectivity":
-            cmap = 'autumn_r'
+            contourf_kw = {'levels': levels, 'cmap': 'autumn_r'}
         else:
-            cmap = 'jet'
-        contourf_kw = {'levels': 31, 'cmap': cmap}
+            contourf_kw = {'levels': levels, 'cmap': 'jet'}
     filled = plt.contourf(X, Y, Z, **contourf_kw)
     plt.colorbar(filled)
 
@@ -107,6 +114,8 @@ def plot_2d(csv_path, fig_size=None, contour_kw=None, clabel_kw=None, contourf_k
             x, y = pos
             plt.plot(x, y, 'o', color='k', markersize=4)
             plt.annotate(text, xy=(x, y), fontsize=16)
+        plt.xlim(min(x_vals), max(x_vals))
+        plt.ylim(min(y_vals), max(y_vals))
 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)

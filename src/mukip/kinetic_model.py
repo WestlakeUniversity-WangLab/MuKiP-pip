@@ -1,9 +1,13 @@
 import multiprocessing
+import os
 from typing import Literal
+
 import jpype
+import numpy as np
 
 from .plot_1d import plot_1d
 from .plot_2d import plot_2d
+from .plot_selectivity import plot_selectivity as _plot_selectivity_figure
 from .jvm_manager import get_class
 
 
@@ -123,7 +127,7 @@ class KineticModel:
         Get the point constant expressions that varies with descriptors but does not vary with independent variables.
         :return: constant names and their expressions.
         """
-        return {str(k): str(v) for k, v in self.model.getSolver().getConstantExpressionDictionary().items()}
+        return {str(k): str(v) for k, v in self.model.getSolver().getPointConstantExpressionDictionary().items()}
 
     def get_expression_dictionary(self):
         """
@@ -206,13 +210,15 @@ class KineticModel:
             return "No DRC data found."
         return str(data.show(pt))
 
-    def write(self, plot: bool = False, fig_size=None, contour_kw=None, clabel_kw=None, contourf_kw=None, plot_kw=None):
+    def write(self, plot: bool = False, fig_size=None, dpi=None, contour_kw=None, clabel_kw=None, contourf_kw=None, plot_kw=None):
         """
         Write data with writers defined in the setup file.
-            :param plot: Whether to generate and save plots along with data.
+        :param plot: Whether to generate and save plots along with data.
             Default: False
         :param fig_size: Figure size in inches as a tuple (width, height).
             Default: (9, 6)
+        :param dpi: Figure dpi as an integer.
+            Default: 100
         :param contour_kw: Keyword arguments passed to matplotlib's contour() for contour lines.
             Default: {'levels': 31, 'colors': 'black', 'linewidths': 0.5}
         :param clabel_kw: Keyword arguments passed to matplotlib's clabel() for contour labels.
@@ -232,13 +238,87 @@ class KineticModel:
                 class_name = writer.__class__.__name__
                 csv_path = str(writer.getOutputFile().getAbsolutePath())
                 if class_name == "com.wang_lab.mukip.components.writer.CSV2DWriter":
-                    plot_2d(csv_path, fig_size, contour_kw, clabel_kw, contourf_kw, str(writer.getDataType()), metals)
+                    plot_2d(csv_path, dpi, fig_size, contour_kw, clabel_kw, contourf_kw, str(writer.getDataType()), metals)
                 elif class_name == "com.wang_lab.mukip.components.writer.CSV2DCustomWriter":
-                    plot_2d(csv_path, fig_size, contour_kw, clabel_kw, contourf_kw, None, metals)
+                    plot_2d(csv_path, dpi, fig_size, contour_kw, clabel_kw, contourf_kw, None, metals)
                 elif class_name == "com.wang_lab.mukip.components.writer.CSV1DWriter":
-                    plot_1d(csv_path, fig_size, plot_kw, str(writer.getDataType()), metals)
+                    plot_1d(csv_path, dpi, fig_size, plot_kw, str(writer.getDataType()), metals)
                 elif class_name == "com.wang_lab.mukip.components.writer.CSV1DMultiWriter":
-                    plot_1d(csv_path, fig_size, plot_kw, None, metals)
+                    plot_1d(csv_path, dpi, fig_size, plot_kw, None, metals)
                 else:
                     print(f"Plot method for {class_name} not implemented")
 
+    def plot_selectivity(self, fig_size=None, save_each=False):
+        """
+        Plot the selectivity maps of all products composited into one image and
+        save it directly to a PNG file.
+
+        This is the command-line counterpart of the "Selectivity Map" window in
+        MuKiP-Visual: every product's selectivity field is tinted with its own
+        colour and the fields are blended together, so the dominant product at
+        each point is visible at a glance. It requires a 2D model (two
+        descriptors).
+
+        :param fig_size: Figure size in inches as a tuple (width, height).
+            Default: (16, 12)
+        :param save_each: When True, also save one grayscale PNG per product
+            (mirrors MuKiP-Visual's per-product intermediate images).
+        :return: The path of the saved composite PNG.
+        """
+        scaler_class = self.model.getScaler().__class__.__name__
+        metals = None
+        if scaler_class == "com.wang_lab.mukip.components.scaler.LinearScaler":
+            metals = {str(k): _wrap_double_array(v) for k,v in self.model.getScaler().getSurfaceDescriptorValue().items()}
+
+        data_types = self.get_data_types()
+        if "selectivity" not in data_types:
+            raise ValueError("This model has no selectivity data.")
+
+        mapper = self.model.getMapper()
+        descriptors = [str(d.getName()) for d in mapper.getDescriptors()]
+        if len(descriptors) != 2:
+            raise ValueError(
+                f"Selectivity map requires a 2D model, but got "
+                f"{len(descriptors)} descriptor(s)."
+            )
+
+        scale_obj = mapper.getScale()
+        scales = [[float(d) for d in scale_obj.get(i)] for i in range(len(descriptors))]
+        x_values = scales[0]
+        y_values = scales[1]
+
+        range_obj = mapper.getRange()
+        ranges = [[float(d) for d in range_obj.get(i)] for i in range(len(descriptors))]
+
+        items = self.get_data_items("selectivity")
+        nx = len(x_values)
+        ny = len(y_values)
+        selectivities = np.full((len(items), ny, nx), np.nan, dtype=np.float32)
+
+        for j in range(ny):
+            for i in range(nx):
+                pt = self._get_grid_point(i, j)
+                data = self.model.getPointData(pt, "selectivity")
+                if data is None:
+                    continue
+                for k, value in enumerate(data):
+                    selectivities[k, j, i] = self._to_float(value)
+
+        output_path = os.path.splitext(self.setup_file)[0] + "_selectivity.png"
+
+        color_map = {str(k): (int(v.getFirst()), int(v.getSecond()), int(v.getThird()))
+                     for k, v in dict(self.model.getSelectivityColors()).items()}
+        return _plot_selectivity_figure(
+            items,
+            [selectivities[k] for k in range(len(items))],
+            x_values,
+            y_values,
+            ranges,
+            output_path,
+            fig_size=fig_size,
+            colors=color_map,
+            xlabel=descriptors[0],
+            ylabel=descriptors[1],
+            annotation=metals,
+            save_each=save_each
+        )

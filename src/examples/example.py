@@ -43,23 +43,11 @@ except:
 # The saved data can be reloaded later using a.load_data() to skip re-running the simulation
 a.save_data()
 
-try:
-    # Retrieve and print thermodynamic parameters at 800 K and 1.0 bar
-    # The arguments correspond to grid indices (25, 15) in the parameter space
-    print(a.get_grid_parameters(25, 15))
-
-    # Retrieve and print simulation results at 800 K and 1.0 bar
-    print(a.get_result(25, 15))
-
-    # Retrieve and print detailed variable information at 800 K and 1.0 bar
-    print(a.get_variables(25, 15))
-
-    # Show DRC information
-    # This line only works when Only when a SpeciesEnergyDRCModifier is set in the setup file!
-    print(a.get_DRC_info_at(10, 10))
-except:
-    pass
-
 # Write output results and generate plots as defined in the writer section of the setup file
 # The output content and path are configured in the setup file's writer field
 a.write(plot=True)
+
+try:
+    a.plot_selectivity()
+except:
+    print('This model has no selectivity data!')
