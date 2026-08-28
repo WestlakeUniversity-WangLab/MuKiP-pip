@@ -5,9 +5,9 @@
 The **Mu**lti-scale **Ki**netic modeling **P**latform (MuKiP) is a comprehensive software toolkit designed for 
 addressing complex physicochemical processes at three-phase interfaces in heterogeneous catalysis, currently under 
 development by Prof. Tao Wang’s group at Westlake University. It is written in Kotlin/Java and published on PyPI. 
-The first release of this platform currently focuses on efficient descriptor-based microkinetic modeling and will, 
-in the future, enable multiple multi-scale modules that integrate factors such as electrochemistry, reactor kinetics, 
-and mass transport. Designed for modular construction of multi-scale kinetic models, it aims to automate the assembly 
+The current release of this platform focuses on efficient descriptor-based microkinetic modeling and have implemented 
+reactor kinetics. In the future, it will further enable multi-scale modules that integrate factors including 
+mass transport. Designed for modular construction of multi-scale kinetic models, it aims to automate the assembly 
 of systems of equations using algebraic modules and to solve them efficiently with advanced algorithms. The platform 
 also provides open interfaces, allowing third-party developers to create and distribute custom addons.
 
