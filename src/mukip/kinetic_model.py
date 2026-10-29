@@ -60,8 +60,16 @@ class KineticModel:
         """
         self.model.saveData()
 
-    def _get_grid_point(self, *index: int):
-        return self.model.getPoint(self.GridPoint(*index))
+    def _get_grid_point(self, *index: int, sheet=None):
+        grid = self.GridPoint(*index)
+        if sheet is not None:
+            return self.model.getMapper().getPoint(grid, jpype.JLong(sheet))
+        return self.model.getPoint(grid)
+
+    def get_solution_sheets(self):
+        """Return persistent numeric sheet IDs, or [] for a single-solution mapper."""
+        mapper = self.model.getMapper()
+        return [int(s) for s in mapper.getSheets()] if hasattr(mapper, 'getSheets') else []
 
     def get_global_parameters(self):
         """
@@ -213,6 +221,8 @@ class KineticModel:
     def write(self, plot: bool = False, fig_size=None, dpi=None, contour_kw=None, clabel_kw=None, contourf_kw=None, plot_kw=None):
         """
         Write data with writers defined in the setup file.
+        MultiSolutionMapper CSV writers export every sheet as ``*_sheet_<id>.csv``;
+        plot=True generates a corresponding PNG for each CSV.
         :param plot: Whether to generate and save plots along with data.
             Default: False
         :param fig_size: Figure size in inches as a tuple (width, height).
@@ -236,19 +246,23 @@ class KineticModel:
             writer.output()
             if plot:
                 class_name = writer.__class__.__name__
-                csv_path = str(writer.getOutputFile().getAbsolutePath())
-                if class_name == "com.wang_lab.mukip.components.writer.CSV2DWriter":
-                    plot_2d(csv_path, dpi, fig_size, contour_kw, clabel_kw, contourf_kw, str(writer.getDataType()), metals)
-                elif class_name == "com.wang_lab.mukip.components.writer.CSV2DCustomWriter":
-                    plot_2d(csv_path, dpi, fig_size, contour_kw, clabel_kw, contourf_kw, None, metals)
-                elif class_name == "com.wang_lab.mukip.components.writer.CSV1DWriter":
-                    plot_1d(csv_path, dpi, fig_size, plot_kw, str(writer.getDataType()), metals)
-                elif class_name == "com.wang_lab.mukip.components.writer.CSV1DMultiWriter":
-                    plot_1d(csv_path, dpi, fig_size, plot_kw, None, metals)
-                else:
-                    print(f"Plot method for {class_name} not implemented")
+                files = writer.getOutputFiles() if hasattr(writer, 'getOutputFiles') else [writer.getOutputFile()]
+                for file in files:
+                    csv_path = str(file.getAbsolutePath())
+                    if class_name in ("com.wang_lab.mukip.components.writer.CSV2DWriter",
+                                      "com.wang_lab.mukip.components.writer.CSV2DCustomWriter"):
+                        data_type = str(writer.getDataType()) if hasattr(writer, 'getDataType') else None
+                        plot_2d(csv_path, fig_size=fig_size, dpi=dpi, contour_kw=contour_kw,
+                                clabel_kw=clabel_kw, contourf_kw=contourf_kw, data_type=data_type, annotation=metals)
+                    elif class_name in ("com.wang_lab.mukip.components.writer.CSV1DWriter",
+                                        "com.wang_lab.mukip.components.writer.CSV1DMultiWriter"):
+                        data_type = str(writer.getDataType()) if hasattr(writer, 'getDataType') else None
+                        plot_1d(csv_path, fig_size=fig_size, dpi=dpi, plot_kw=plot_kw,
+                                data_type=data_type, annotation=metals)
+                    else:
+                        print(f"Plot method for {class_name} not implemented")
 
-    def plot_selectivity(self, fig_size=None, save_each=False):
+    def plot_selectivity(self, fig_size=None, save_each=False, sheet=None):
         """
         Plot the selectivity maps of all products composited into one image and
         save it directly to a PNG file.
@@ -263,8 +277,19 @@ class KineticModel:
             Default: (16, 12)
         :param save_each: When True, also save one grayscale PNG per product
             (mirrors MuKiP-Visual's per-product intermediate images).
-        :return: The path of the saved composite PNG.
+        :param sheet: Optional MultiSolutionMapper sheet ID. By default export all sheets.
+        :return: A PNG path for ordinary models or an explicit sheet; a dict of
+            sheet IDs to PNG paths when exporting all MultiSolutionMapper sheets.
         """
+        mapper = self.model.getMapper()
+        if hasattr(mapper, 'getSheets'):
+            sheets = self.get_solution_sheets()
+            if sheet is None:
+                return {s: self.plot_selectivity(fig_size, save_each, sheet=s) for s in sheets}
+            if sheet not in sheets:
+                raise ValueError(f"Unknown solution sheet {sheet}; available sheets: {sheets}")
+        elif sheet is not None:
+            raise ValueError("A sheet can only be selected for MultiSolutionMapper")
         scaler_class = self.model.getScaler().__class__.__name__
         metals = None
         if scaler_class == "com.wang_lab.mukip.components.scaler.LinearScaler":
@@ -297,14 +322,17 @@ class KineticModel:
 
         for j in range(ny):
             for i in range(nx):
-                pt = self._get_grid_point(i, j)
+                pt = self._get_grid_point(i, j, sheet=sheet)
+                if pt is None:
+                    continue
                 data = self.model.getPointData(pt, "selectivity")
                 if data is None:
                     continue
                 for k, value in enumerate(data):
                     selectivities[k, j, i] = self._to_float(value)
 
-        output_path = os.path.splitext(self.setup_file)[0] + "_selectivity.png"
+        suffix = f"_sheet_{sheet}" if sheet is not None else ""
+        output_path = os.path.splitext(self.setup_file)[0] + f"_selectivity{suffix}.png"
 
         color_map = {str(k): (int(v.getFirst()), int(v.getSecond()), int(v.getThird()))
                      for k, v in dict(self.model.getSelectivityColors()).items()}
@@ -320,5 +348,6 @@ class KineticModel:
             xlabel=descriptors[0],
             ylabel=descriptors[1],
             annotation=metals,
-            save_each=save_each
+            save_each=save_each,
+            each_dir=os.path.splitext(output_path)[0] + '_products' if sheet is not None else None
         )

@@ -121,4 +121,5 @@ def plot_2d(csv_path, fig_size=None, dpi=None, contour_kw=None, clabel_kw=None, 
     plt.ylabel(ylabel)
     plt.title(title)
     plt.tight_layout()
-    plt.savefig(csv_path.replace('.csv', '.png'))
+    plt.savefig(os.path.splitext(csv_path)[0] + '.png')
+    plt.close()

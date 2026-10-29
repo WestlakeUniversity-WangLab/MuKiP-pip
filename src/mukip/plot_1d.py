@@ -47,10 +47,15 @@ def plot_1d(csv_path, fig_size=None, dpi=None, plot_kw=None, data_type=None, ann
 
     if annotation:
         for text, pos in annotation.items():
+            if len(pos) == 1:
+                plt.axvline(pos[0], color='k', linewidth=0.5, alpha=0.5)
+                plt.annotate(text, xy=(pos[0], 0.04), xycoords=('data', 'axes fraction'), fontsize=12)
+                continue
             x, y = pos
             plt.plot(x, y, 'o', color='k', markersize=4)
             plt.annotate(text, xy=(x, y), fontsize=16)
 
     plt.xlabel(xlabel)
     plt.tight_layout()
-    plt.savefig(csv_path.replace('.csv', '.png'))
+    plt.savefig(os.path.splitext(csv_path)[0] + '.png')
+    plt.close()

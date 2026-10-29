@@ -67,9 +67,10 @@ The test data used in the examples is derived from these following publication:
 
 If you use this software in your research, please cite the following paper:
 
-> **Yonghua Liu, Tao Wang. Sampling-Expansion Approach Enabling Efficient and Accurate
-Steady-State Solutions for Descriptor-Based Microkinetic Modeling. ACS Catal., 2026, DOI:
-[10.1021/acscatal.1c04347](http://doi.org/10.1021/acscatal.6c02921)**
+> Yonghua Liu, Tao Wang. Sampling-Expansion Approach Enabling Efficient and Accurate
+Steady-State Solutions for Descriptor-Based Microkinetic Modeling. *ACS Catal.* 
+**2026**, *16* (19), 18966–18974. DOI:
+[10.1021/acscatal.1c04347](http://doi.org/10.1021/acscatal.6c02921)
 
 ## Future Plans
 

@@ -60,7 +60,7 @@ class Server:
         self.error = None
         self.element = None
         self.text = ""
-        self.text_hash = 0
+        self.text_hash = None
         self.text_lengths = []
 
     def start(self):
@@ -74,7 +74,11 @@ class Server:
             if h == self.text_hash:
                 return
             self.text = text
-            self.text_lengths = [len(t) for t in self.text.splitlines(keepends=True)]
+            # Kotlin offsets and VS Code positions both count UTF-16 code units.
+            self.text_lengths = [len(t.encode("utf-16-le")) // 2 for t in self.text.splitlines(keepends=True)]
+            self.analysis = None
+            self.key_range = None
+            self.element = None
             try:
                 self.analysis = _JSON5.parseToJson5ElementAndRanges(self.text)
                 self.key_range = self.analysis.getFirst()
@@ -85,13 +89,14 @@ class Server:
             self.text_hash = h
 
         def get_pos(offset: int) -> dict:
-            i = 0
-            length = offset
-            while True:
-                if length < self.text_lengths[i]:
+            length = max(0, offset)
+            for i, line_length in enumerate(self.text_lengths):
+                if length < line_length:
                     return {"line": i, "character": length}
-                length -= self.text_lengths[i]
-                i += 1
+                length -= line_length
+            if not self.text_lengths or self.text.endswith(("\n", "\r")):
+                return {"line": len(self.text_lengths), "character": 0}
+            return {"line": len(self.text_lengths) - 1, "character": self.text_lengths[-1]}
 
         def get_offset(pos: dict) -> int:
             line = pos["line"]
@@ -127,27 +132,51 @@ class Server:
                         "message": "Duplicate key",
                         "severity": 1
                     })
-            if self.element:
+            if self.element is not None:
+                errors = []
                 try:
-                    # genClass(j, keyName) - JPype cannot use Kotlin default args,
-                    # so pass the optional keyName explicitly as None.
-                    _MKM.genClass(self.element, None)
+                    if hasattr(_MKM, "validateForEditor"):
+                        errors = list(_MKM.validateForEditor(self.element))
+                    else:
+                        # Compatibility with older installed MuKiP jars.
+                        _MKM.genClass(self.element, None)
                 except Exception as e:
-                    errors = []
-                    if e.__class__ == _PATTERN_EXCEPTION:
-                        errors.append(e)
-                    elif e.__class__ == _PATTERN_EXCEPTION_LIST:
-                        for error in e.getExceptions():
-                            errors.append(error)
-                    for error in errors:
-                        error_range = self.key_range.get(error.getPath())
-                        if error_range:
-                            diagnostics.append({
-                                "range": {"start": get_pos(int(error_range.getStart())),
-                                          "end": get_pos(int(error_range.getEnd()))},
-                                "message": str(error.getMessage()),
-                                "severity": 1
-                            })
+                    if hasattr(e, "getClass") and _PATTERN_EXCEPTION.isInstance(e):
+                        errors = [e]
+                    elif hasattr(e, "getClass") and _PATTERN_EXCEPTION_LIST.isInstance(e):
+                        errors = list(e.getExceptions())
+                    else:
+                        print(f"[mukip.server] validation ERROR: {e}", file=sys.stderr)
+                        diagnostics.append({
+                            "range": {"start": get_pos(0), "end": get_pos(0)},
+                            "message": "Cannot validate model configuration: " + str(e),
+                            "severity": 0
+                        })
+                for error in errors:
+                    key = str(error.getPath())
+                    target = str(error.getTarget()) if hasattr(error, "getTarget") else "value"
+                    error_range = self.key_range.get(key)
+                    missing = target == "missing"
+                    if missing:
+                        parent = key.rsplit(".", 1)[0] if "." in key else ""
+                        error_range = self.key_range.get(parent)
+                    if error_range is None:
+                        continue
+                    start = int(error_range.getStart())
+                    end = int(error_range.getEnd())
+                    if missing:
+                        # Object ranges end immediately after '}', even with trailing comments.
+                        encoded = self.text.encode("utf-16-le")
+                        if encoded[max(0, end - 1) * 2:end * 2] == b"}\x00":
+                            start = end - 1
+                    redundant = int(error.getLevel()) == 2
+                    diagnostics.append({
+                        "range": {"start": get_pos(start), "end": get_pos(end)},
+                        "message": ((key[:-2] if key.endswith("$k") else key) + ": " + str(error.getInfo())) if redundant else str(error.getMessage()),
+                        "severity": 0 if missing else (2 if redundant else 1),
+                        "code": "missing-required-parameter" if missing else (
+                            "unused-parameter" if redundant else "invalid-value")
+                    })
             return diagnostics
 
         def get_key_path_at_position(offset: int) -> str:

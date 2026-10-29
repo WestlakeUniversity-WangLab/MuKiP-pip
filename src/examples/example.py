@@ -43,6 +43,8 @@ except:
 # The saved data can be reloaded later using a.load_data() to skip re-running the simulation
 a.save_data()
 
+print('Solution sheets:', a.get_solution_sheets())
+
 # Write output results and generate plots as defined in the writer section of the setup file
 # The output content and path are configured in the setup file's writer field
 a.write(plot=True)
